@@ -4,8 +4,8 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
 
 from .permissions import IsAuthorOrReadOnly
-from .serializers import (CommentSerializer, Follow, FollowSerializer, Group,
-                          GroupSerializer, Post, PostSerializer, User)
+from .serializers import (CommentSerializer, FollowSerializer, Group,
+                          GroupSerializer, Post, PostSerializer)
 
 
 class ListCreateViewSet(mixins.ListModelMixin,
