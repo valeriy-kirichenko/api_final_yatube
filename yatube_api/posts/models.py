@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.shortcuts import get_object_or_404
 
 User = get_user_model()
 
@@ -40,6 +41,9 @@ class Post(models.Model):
         blank=True,
     )
 
+    class Meta:
+        ordering = ['pub_date']
+
     def __str__(self):
         return (
             f'{self.pk} {self.text[:15]} {self.pub_date} '
@@ -71,19 +75,20 @@ class Follow(models.Model):
     following = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
+        blank=True,
+        null=True,
         related_name='following',
     )
 
     class Meta:
-        unique_together = ('user', 'following')
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'following'], name='unique_follow')
+        ]
 
     def clean(self):
         if self.user == self.following:
             raise ValidationError('Вы не можете подписаться на самого себя')
-        if self.following.following.count() > 1:
-            raise ValidationError(
-                'Нельзя подписаться на автора более одного раза'
-            )
 
     def save(self, *args, **kwargs):
         self.full_clean()
