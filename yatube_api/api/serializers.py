@@ -5,6 +5,8 @@ from posts.models import Comment, Follow, Group, Post, User
 
 
 class FollowSerializer(serializers.ModelSerializer):
+    """Сериализатор для работы с подписками."""
+
     user = serializers.SlugRelatedField(
         read_only=True,
         slug_field='username',
@@ -27,6 +29,18 @@ class FollowSerializer(serializers.ModelSerializer):
         ]
 
     def validate_following(self, following):
+        """Проверка подписки.
+
+        Args:
+            following (User): объект пользователя.
+
+        Raises:
+            serializers.ValidationError: ошибка при попытке подписки на самого
+            себя.
+
+        Returns:
+            User: объект пользователя.
+        """
         if following == self.context['request'].user:
             raise serializers.ValidationError(
                 'Вы не можете подписаться на самого себя')
@@ -34,6 +48,7 @@ class FollowSerializer(serializers.ModelSerializer):
 
 
 class GroupSerializer(serializers.ModelSerializer):
+    """Сериализатор для работы с группами."""
 
     class Meta:
         model = Group
@@ -41,6 +56,8 @@ class GroupSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    """Сериализатор для работы с комментариями."""
+
     author = serializers.SlugRelatedField(
         read_only=True, slug_field='username'
     )
@@ -52,6 +69,8 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
+    """Сериализатор для работы с постами."""
+
     author = serializers.SlugRelatedField(
         read_only=True, slug_field='username'
     )
